@@ -4,4 +4,7 @@ const { AirplaneController } = require("../../controllers");
 const { validateCreateRequest } = require("../../middlewares");
 
 router.post("/", validateCreateRequest, AirplaneController.createAirplane);
+router.get("/", AirplaneController.getAllAirplanes);
+router.get("/:id", AirplaneController.getAirplane);
+router.delete("/:id", AirplaneController.destroyAirplane);
 module.exports = router;

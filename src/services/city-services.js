@@ -31,7 +31,71 @@ async function createCity(data) {
     );
   }
 }
+async function getAllCities() {
+  try {
+    const cities = await cityRepository.getAll();
+    logger.info("Successfully fetched Cities");
+    return cities;
+  } catch (error) {
+    logger.error("Failed to fetch cities", error.message);
+
+    throw new AppError(
+      "Cannot fetch details of cities",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+async function destroCity(id) {
+  try {
+    const response = await cityRepository.destroy(id);
+    if (!response)
+      throw new AppError(
+        "City not found , Please check Id",
+        StatusCodes.NOT_FOUND
+      );
+    logger.info("Successfully Destroyed City with id :", id);
+    return response;
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(
+      `Failed to destroy City with id :${id}`,
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+async function updateCity(id, { name }) {
+  try {
+    const response = await cityRepository.update(id, { name });
+    if (!response)
+      throw new AppError(
+        "City not found , Please check Id",
+        StatusCodes.NOT_FOUND
+      );
+    logger.info("Successfully Updated City with id :", id);
+    return response;
+  } catch (error) {
+    if (
+      error.name == "SequelizeValidationError" ||
+      error.name == "SequelizeUniqueConstraintError"
+    ) {
+      let explanation = [];
+      error.errors.forEach((err) => {
+        explanation.push(err.message);
+      });
+      logger.error(explanation);
+      throw new AppError(explanation, StatusCodes.BAD_REQUEST);
+    }
+    logger.error(error.message);
+
+    throw new AppError("Cannot Update City", StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
 
 module.exports = {
   createCity,
+  getAllCities,
+  updateCity,
+  destroCity,
 };

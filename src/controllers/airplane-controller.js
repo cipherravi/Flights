@@ -67,6 +67,37 @@ async function getAirplane(req, res) {
   }
 }
 
+async function updateAirplane(req, res) {
+  try {
+    const { id, modelNumber, capacity } = req.body;
+
+    if (!id || !modelNumber || !capacity || isNaN(Number(id)))
+      throw new AppError("Send valid Data", StatusCodes.BAD_REQUEST);
+
+    const response = await AirplaneService.updateAirplane(id, {
+      modelNumber,
+      capacity,
+    });
+    logger.info("Succesfully Updated Airplane with id :", id);
+    SuccessResponse.data = response;
+    SuccessResponse.message = `Succesfully updated Airplane with id :${id} `;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    logger.error(error.stack || error.message);
+
+    //If it's an AppError then use it's own message status codes
+    const statusCode =
+      error instanceof AppError
+        ? error.statusCode
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+    const message =
+      error instanceof AppError ? error.message : "Something went wrong";
+
+    ErrorResponse.error = message;
+    return res.status(statusCode).json(ErrorResponse);
+  }
+}
+
 async function destroyAirplane(req, res) {
   try {
     const { id } = req.params;
@@ -98,5 +129,6 @@ module.exports = {
   createAirplane,
   getAllAirplanes,
   getAirplane,
+  updateAirplane,
   destroyAirplane,
 };

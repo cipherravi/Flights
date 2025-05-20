@@ -70,6 +70,40 @@ async function getAirplane(id) {
   }
 }
 
+async function updateAirplane(id, { modelNumber, capacity }) {
+  try {
+    const response = await airplaneRepository.update(id, {
+      modelNumber,
+      capacity,
+    });
+    if (!response)
+      throw new AppError(
+        "Airplane not found , Please check Id",
+        StatusCodes.NOT_FOUND
+      );
+    logger.info("Successfully Updated Airplane with id :", id);
+    return response;
+  } catch (error) {
+    if (
+      error.name == "SequelizeValidationError" ||
+      error.name == "SequelizeUniqueConstraintError"
+    ) {
+      let explanation = [];
+      error.errors.forEach((err) => {
+        explanation.push(err.message);
+      });
+      logger.error(explanation);
+      throw new AppError(explanation, StatusCodes.BAD_REQUEST);
+    }
+    logger.error(error.message);
+
+    throw new AppError(
+      "Cannot Update Airplane",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
 async function destroyAirplane(id) {
   try {
     const response = await airplaneRepository.destroy(id);
@@ -96,5 +130,6 @@ module.exports = {
   createAirplane,
   getAllAirplanes,
   getAirplane,
+  updateAirplane,
   destroyAirplane,
 };

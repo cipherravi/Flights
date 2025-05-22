@@ -40,12 +40,16 @@ const getLogger = (filePath) => {
         zippedArchive: true,
         maxSize: "20m",
         maxFiles: "14d",
-        format: logFormat, // ✅ Apply format here too
+        format: logFormat,
       }),
-      new transports.File({
-        filename: "logs/error.log",
+      new DailyRotateFile({
+        filename: "logs/error-%DATE%.log",
+        datePattern: "YYYY-MM-DD",
         level: "error",
-        format: logFormat, // ✅ This is what was missing
+        zippedArchive: true,
+        maxSize: "20m",
+        maxFiles: "14d",
+        format: logFormat,
       }),
     ],
   });

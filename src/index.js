@@ -12,22 +12,6 @@ app.use("/api", apiRoutes);
 app.listen(serverConfig.PORT, async () => {
   logger.info("Server started running at PORT :: " + serverConfig.PORT);
   const { Flight, Airplane, Airport, City } = require("./models");
-  // const flight = await Flight.create({
-  //   airplaneId: 74,
-  //   departureAirportId: 9,
-  //   arrivalAirportId: 10, // for testing
-  //   departureTime: new Date("2025-06-01T10:00:00"),
-  //   arrivalTime: new Date("2025-06-01T12:00:00"),
-  //   departureDate: "2025-06-01",
-  //   arrivalDate: "2025-06-01",
-  //   price: 5000,
-  //   duration: "2h",
-  //   availableSeat: 80,
-  //   status: "Scheduled",
-  //   isDirect: true,
-  //   baggageAllowance: "15kg + 7kg cabin",
-  //   mealsIncluded: true,
-  // });
 
   const flight = await Flight.findByPk(3, {
     include: [

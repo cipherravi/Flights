@@ -6,7 +6,7 @@ const { SuccessResponse, ErrorResponse } = require("../utils/common");
 const { AirplaneService } = require("../services");
 const AppError = require("../utils/AppError");
 
-async function createAirplane(req, res, next) {
+async function createAirplane(req, res) {
   try {
     const { modelNumber, capacity } = req.body;
 

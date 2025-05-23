@@ -1,7 +1,9 @@
-const { validateCreateRequest } = require("./airplane-middlewares");
-const { validateCreateCity } = require("./city-middlewares");
+const AirplaneValidator = require("./airplane-middlewares");
+const CityValidator = require("./city-middlewares");
+const FlightValidator = require("./flight-middlewares");
 
 module.exports = {
-  validateCreateRequest,
-  validateCreateCity,
+  AirplaneValidator,
+  CityValidator,
+  FlightValidator,
 };

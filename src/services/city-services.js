@@ -31,6 +31,31 @@ async function createCity(data) {
     );
   }
 }
+async function getCity(id) {
+  try {
+    const city = await cityRepository.get(id);
+    if (!city) {
+      throw new AppError(
+        "City Not Found , Please check Id",
+        StatusCodes.NOT_FOUND
+      );
+    }
+    logger.info("Successfully fetched City with id :", id);
+    return city;
+  } catch (error) {
+    logger.error("Failed to fetch City", error.message);
+
+    // Don't override existing AppError
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    throw new AppError(
+      "Cannot fetch details of City",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
 async function getAllCities() {
   try {
     const cities = await cityRepository.getAll();
@@ -95,6 +120,7 @@ async function updateCity(id, { name }) {
 
 module.exports = {
   createCity,
+  getCity,
   getAllCities,
   updateCity,
   destroCity,

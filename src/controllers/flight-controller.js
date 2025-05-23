@@ -1,8 +1,8 @@
 const { FlightServcie } = require("../services");
 const { StatusCodes } = require("http-status-codes");
 const { getLogger } = require("../config");
-const AppError = require("../utils/AppError");
 const logger = getLogger(__filename);
+const AppError = require("../utils/AppError");
 const { SuccessResponse, ErrorResponse } = require("../utils/common");
 
 async function createFlight(req, res) {
@@ -23,23 +23,6 @@ async function createFlight(req, res) {
       baggageAllowance,
       mealsIncluded,
     } = req.body;
-
-    console.log({
-      airplaneId,
-      departureAirportId,
-      arrivalAirportId,
-      departureTime,
-      arrivalTime,
-      departureDate,
-      arrivalDate,
-      price,
-      duration,
-      availableSeat,
-      status,
-      isDirect,
-      baggageAllowance,
-      mealsIncluded,
-    });
 
     const flight = await FlightServcie.createFlight({
       airplaneId,
@@ -76,4 +59,30 @@ async function createFlight(req, res) {
   }
 }
 
-module.exports = { createFlight };
+async function getAllFlights(req, res) {
+  try {
+    const response = await FlightServcie.getAllFlights(req.query);
+
+    if (response.length === 0) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "No flights found" });
+    }
+    SuccessResponse.data = response;
+    SuccessResponse.message = "Successfully find data";
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    logger.error(error.stack || error.message);
+    const statusCode =
+      error instanceof AppError
+        ? error.statusCode
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+    const message =
+      error instanceof AppError ? error.message : "Something went wrong";
+    ErrorResponse.error = error;
+    ErrorResponse.message = message;
+    return res.status(statusCode).json(ErrorResponse);
+  }
+}
+
+module.exports = { createFlight, getAllFlights };

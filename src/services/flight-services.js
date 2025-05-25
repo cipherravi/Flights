@@ -68,7 +68,7 @@ async function getAllFlights({
   }
   if (sort) {
     const params = sort.split(",");
-    console.log(params);
+
     const sortFilters = params.map((param) => {
       return param.split("_");
     });
@@ -76,9 +76,7 @@ async function getAllFlights({
   }
 
   try {
-    console.log(departureDate);
     const response = await flightRepository.getAllFlights(filter, sortBy);
-
     return response;
   } catch (error) {
     throw new AppError(

@@ -1,7 +1,7 @@
 const { getLogger } = require("../config");
 const logger = getLogger(__filename);
 const CrudRepositoy = require("./crud-repository");
-const { Flight } = require("../models");
+const { Flight, Airplane, Airport, City } = require("../models");
 class FlightRepository extends CrudRepositoy {
   constructor() {
     super(Flight);
@@ -9,7 +9,41 @@ class FlightRepository extends CrudRepositoy {
 
   async getAllFlights(filter, sortBy) {
     try {
-      const response = await Flight.findAll({ where: filter, order: sortBy });
+      const response = await Flight.findAll({
+        where: filter,
+        order: sortBy,
+        include: [
+          {
+            model: Airplane,
+            as: "airplane", // from Flight model association
+            attributes: ["modelNumber", "capacity"],
+          },
+          {
+            model: Airport,
+            as: "departureAirport", // from Flight model
+            attributes: ["name", "code", "address"],
+            include: [
+              {
+                model: City,
+                as: "city", // from Airport model
+                attributes: ["name"],
+              },
+            ],
+          },
+          {
+            model: Airport,
+            as: "arrivalAirport", // from Flight model
+            attributes: ["name", "code", "address"],
+            include: [
+              {
+                model: City,
+                as: "city", // from Airport model
+                attributes: ["name"],
+              },
+            ],
+          },
+        ],
+      });
       logger.info("Successfully accessed getAllFlights");
       return response;
     } catch (error) {

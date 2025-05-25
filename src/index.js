@@ -9,43 +9,6 @@ const apiRoutes = require("./routes");
 
 app.use("/api", apiRoutes);
 
-app.listen(serverConfig.PORT, async () => {
+app.listen(serverConfig.PORT, () => {
   logger.info("Server started running at PORT :: " + serverConfig.PORT);
-  // const { Flight, Airplane, Airport, City } = require("./models");
-
-  // const flight = await Flight.findByPk(2, {
-  //   include: [
-  //     {
-  //       model: Airplane,
-  //       as: "airplane", // from Flight model association
-  //       attributes: ["modelNumber", "capacity"],
-  //     },
-  //     {
-  //       model: Airport,
-  //       as: "departureAirport", // from Flight model
-  //       attributes: ["name", "code", "address"],
-  //       include: [
-  //         {
-  //           model: City,
-  //           as: "city", // from Airport model
-  //           attributes: ["name"],
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       model: Airport,
-  //       as: "arrivalAirport", // from Flight model
-  //       attributes: ["name", "code", "address"],
-  //       include: [
-  //         {
-  //           model: City,
-  //           as: "city", // from Airport model
-  //           attributes: ["name"],
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // });
-
-  // console.log(JSON.stringify(flight, null, 2));
 });

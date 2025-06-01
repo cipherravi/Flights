@@ -8,4 +8,7 @@ router.post(
   FlightController.createFlight
 );
 router.get("/", FlightController.getAllFlights);
+router.get("/:id", FlightController.getFlight);
+router.patch("/", FlightController.updateRemainingSeats);
+
 module.exports = router;

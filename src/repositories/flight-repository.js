@@ -1,10 +1,52 @@
 const { getLogger } = require("../config");
 const logger = getLogger(__filename);
 const CrudRepositoy = require("./crud-repository");
-const { Flight, Airplane, Airport, City } = require("../models");
+const { Flight, Airplane, Airport, City, sequelize } = require("../models");
 class FlightRepository extends CrudRepositoy {
   constructor() {
     super(Flight);
+  }
+
+  async getFlight(id) {
+    try {
+      const flight = await Flight.findByPk(id, {
+        include: [
+          {
+            model: Airplane,
+            as: "airplane",
+            attributes: ["modelNumber", "capacity"],
+          },
+          {
+            model: Airport,
+            as: "departureAirport",
+            attributes: ["name", "code", "address"],
+            include: [
+              {
+                model: City,
+                as: "city",
+                attributes: ["name"],
+              },
+            ],
+          },
+          {
+            model: Airport,
+            as: "arrivalAirport",
+            attributes: ["name", "code", "address"],
+            include: [
+              {
+                model: City,
+                as: "city",
+                attributes: ["name"],
+              },
+            ],
+          },
+        ],
+      });
+
+      return flight;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getAllFlights(filter, sortBy) {
@@ -50,6 +92,37 @@ class FlightRepository extends CrudRepositoy {
       throw error;
     }
   }
+
+  // async updateRemainingSeats(id, seats, decrease) {
+  //   let transaction;
+
+  //   try {
+  //     // transaction = await sequelize.transaction(); // , { transaction }
+  //     const flight = await Flight.findByPk(id);
+
+  //     if (!flight) {
+  //       throw new Error("Flight not found");
+  //     }
+
+  //     let updatedSeats = decrease
+  //       ? flight.availableSeat - seats
+  //       : flight.availableSeat + seats;
+
+  //     // Optionally, protect against negative seats
+  //     if (updatedSeats < 0) {
+  //       throw new Error("Available seats cannot be negative");
+  //     }
+
+  //     flight.availableSeat = updatedSeats;
+  //     await flight.save(); //{ transaction }
+  //     // await transaction.commit();
+
+  //     return flight;
+  //   } catch (error) {
+  //     // if (transaction) await transaction.rollback();
+  //     throw error;
+  //   }
+  // }
 }
 
 module.exports = FlightRepository;

@@ -3,6 +3,9 @@ const { StatusCodes } = require("http-status-codes");
 const { getLogger } = require("../config");
 const logger = getLogger(__filename);
 const { AirplaneRepository } = require("../repositories");
+const { serverConfig } = require("../config");
+const { BOOKING_SERVICE_URL } = serverConfig;
+const axios = require("axios");
 
 const airplaneRepository = new AirplaneRepository();
 
@@ -126,10 +129,41 @@ async function destroyAirplane(id) {
   }
 }
 
+async function getAirplaneWithSeats(id) {
+  try {
+    const airplane = await airplaneRepository.getAirplaneWithSeats(id);
+    if (!airplane)
+      throw new AppError(
+        "Airplane Seats not found , Please check Id",
+        StatusCodes.NOT_FOUND
+      );
+    const seatResponse = await axios.get(
+      `${BOOKING_SERVICE_URL}/api/v1/seats/?airplaneId=${id}`
+    );
+
+    logger.info("Successfully Found Airplane seats with id :", id);
+
+    return {
+      ...airplane.toJSON(),
+      seats: seatResponse.data,
+    };
+  } catch (error) {
+    //Donn't override existing AppError
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(
+      `Failed to fetch Airplane seats with Id :${id}`,
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
 module.exports = {
   createAirplane,
   getAllAirplanes,
   getAirplane,
   updateAirplane,
   destroyAirplane,
+  getAirplaneWithSeats,
 };

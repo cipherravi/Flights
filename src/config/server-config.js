@@ -4,5 +4,5 @@ dotenv.config();
 
 module.exports = {
   PORT: process.env.PORT,
-  DB_PASS: process.env.DB_PASS,
+  BOOKING_SERVICE_URL: process.env.BOOKING_SERVICE_URL,
 };

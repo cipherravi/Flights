@@ -2,7 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { getLogger } = require("../config");
 const logger = getLogger(__filename);
 const { SuccessResponse, ErrorResponse } = require("../utils/common");
-
+const generateSeats = require("../utils/helpers/generateSeatsForAirplane");
 const { AirplaneService } = require("../services");
 const AppError = require("../utils/AppError");
 
@@ -15,6 +15,8 @@ async function createAirplane(req, res) {
       capacity,
     });
     logger.info("createAirplane in Airplane controller accessed succesfully");
+
+    await generateSeats(airplane);
 
     SuccessResponse.data = airplane;
     SuccessResponse.message = "Airplane created successfully";
@@ -125,10 +127,38 @@ async function destroyAirplane(req, res) {
   }
 }
 
+async function getAirplaneWithSeats(req, res) {
+  try {
+    const { id } = req.params;
+    if (!id || isNaN(Number(id)))
+      throw new AppError("Send a valid Id", StatusCodes.BAD_REQUEST);
+
+    const response = await AirplaneService.getAirplaneWithSeats(id);
+    logger.info("Succesfully fetch Airplane seats with id :", id);
+    SuccessResponse.data = response;
+    SuccessResponse.message = `Succesfully fetched Airplane with seats `;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    logger.error(error.stack || error.message);
+
+    //If it's an AppError then use it's own message status codes
+    const statusCode =
+      error instanceof AppError
+        ? error.statusCode
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+    const message =
+      error instanceof AppError ? error.message : "Something went wrong";
+
+    ErrorResponse.error = message;
+    return res.status(statusCode).json(ErrorResponse);
+  }
+}
+
 module.exports = {
   createAirplane,
   getAllAirplanes,
   getAirplane,
   updateAirplane,
   destroyAirplane,
+  getAirplaneWithSeats,
 };

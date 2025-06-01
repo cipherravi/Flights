@@ -85,4 +85,73 @@ async function getAllFlights(req, res) {
   }
 }
 
-module.exports = { createFlight, getAllFlights };
+async function getFlight(req, res) {
+  try {
+    const { id } = req.params;
+    if (!id || isNaN(Number(id))) {
+      throw new AppError("Send valid Id ", StatusCodes.BAD_REQUEST);
+    }
+    const flight = await FlightServcie.getFlight(id);
+    logger.info("Successfully got response from Flight Service getFlight");
+
+    SuccessResponse.data = flight;
+    SuccessResponse.message = `Successfully fetched flight with id : ${id}`;
+    return res.status(StatusCodes.OK).json(flight);
+  } catch (error) {
+    logger.error(error.stack || error.message);
+    //If it's an AppError then use it's own message status codes
+    const message =
+      error instanceof AppError ? error.message : "Something went wrong";
+    const statusCode =
+      error instanceof AppError
+        ? error.statusCode
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+    ErrorResponse.error = message;
+    return res.status(statusCode).json(ErrorResponse);
+  }
+}
+async function updateRemainingSeats(req, res) {
+  try {
+    const { id, seats, decrease } = req.body;
+    // Convert decrease to a real boolean
+    const shouldDecrease = decrease === "true" || decrease === true;
+    if (
+      !id ||
+      isNaN(Number(id)) ||
+      !seats ||
+      isNaN(Number(seats)) ||
+      typeof decrease === "undefined"
+    ) {
+      throw new AppError("Send valid details ", StatusCodes.BAD_REQUEST);
+    }
+    const response = await FlightServcie.updateRemainingSeats(
+      Number(id),
+      Number(seats),
+      shouldDecrease
+    );
+    logger.info("Successfully updated remaining seats");
+    SuccessResponse.data = response;
+    SuccessResponse.message = "Succesfully updated remaining seat";
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    logger.error(error.stack || error.message);
+
+    //If it's an AppError then use it's own message status codes
+    const statusCode =
+      error instanceof AppError
+        ? error.statusCode
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+    const message =
+      error instanceof AppError ? error.message : "Something went wrong";
+
+    ErrorResponse.error = message;
+    return res.status(statusCode).json(ErrorResponse);
+  }
+}
+
+module.exports = {
+  createFlight,
+  getAllFlights,
+  getFlight,
+  updateRemainingSeats,
+};

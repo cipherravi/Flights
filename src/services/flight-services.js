@@ -86,4 +86,68 @@ async function getAllFlights({
   }
 }
 
-module.exports = { createFlight, getAllFlights };
+async function getFlight(id) {
+  try {
+    const flight = await flightRepository.getFlight(id);
+    if (!flight) {
+      throw new AppError("Flight not found , try again", StatusCodes.NOT_FOUND);
+    }
+    logger.info("Succesfully fetched flight with id : ", id);
+    return flight;
+  } catch (error) {
+    logger.error("Failed to fetch flight ", error.message);
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(
+      "Failed to fetch flight",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+async function updateRemainingSeats(id, seats, decrease) {
+  try {
+    const updatedSeat = await flightRepository.updateRemainingSeats(
+      id,
+      seats,
+      decrease
+    );
+    if (!updatedSeat) {
+      throw new AppError(
+        "Failed to update remaining seats ",
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+    logger.info("Successfully upadted remaining seats");
+
+    return updatedSeat;
+  } catch (error) {
+    if (
+      error.name == "SequelizeValidationError" ||
+      error.name == "SequelizeUniqueConstraintError"
+    ) {
+      let explanation = [];
+      error.errors.forEach((err) => {
+        explanation.push(err.message);
+      });
+      logger.error(explanation);
+      throw new AppError(explanation, StatusCodes.BAD_REQUEST);
+    }
+    logger.error(error.message);
+
+    throw new AppError(
+      "Cannot Update Airplane Seat",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+// async function updateFlight(data) {}
+
+module.exports = {
+  createFlight,
+  getAllFlights,
+  getFlight,
+  updateRemainingSeats,
+};

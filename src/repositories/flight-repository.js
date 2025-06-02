@@ -93,36 +93,35 @@ class FlightRepository extends CrudRepositoy {
     }
   }
 
-  // async updateRemainingSeats(id, seats, decrease) {
-  //   let transaction;
+  async updateRemainingSeats(id, seats, decrease) {
+    let transaction = await sequelize.transaction();
 
-  //   try {
-  //     // transaction = await sequelize.transaction(); // , { transaction }
-  //     const flight = await Flight.findByPk(id);
+    try {
+      const flight = await Flight.findByPk(id, { transaction });
 
-  //     if (!flight) {
-  //       throw new Error("Flight not found");
-  //     }
+      if (!flight) {
+        throw new Error("Flight not found");
+      }
 
-  //     let updatedSeats = decrease
-  //       ? flight.availableSeat - seats
-  //       : flight.availableSeat + seats;
+      let updatedSeats = decrease
+        ? flight.availableSeat - seats
+        : flight.availableSeat + seats;
 
-  //     // Optionally, protect against negative seats
-  //     if (updatedSeats < 0) {
-  //       throw new Error("Available seats cannot be negative");
-  //     }
+      // Optionally, protect against negative seats
+      if (updatedSeats < 0) {
+        throw new Error("Available seats cannot be negative");
+      }
 
-  //     flight.availableSeat = updatedSeats;
-  //     await flight.save(); //{ transaction }
-  //     // await transaction.commit();
+      flight.availableSeat = updatedSeats;
+      await flight.save({ transaction });
+      await transaction.commit();
 
-  //     return flight;
-  //   } catch (error) {
-  //     // if (transaction) await transaction.rollback();
-  //     throw error;
-  //   }
-  // }
+      return flight;
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  }
 }
 
 module.exports = FlightRepository;

@@ -8,6 +8,7 @@ const logger = getLogger(__filename);
 const apiRoutes = require("./routes");
 
 app.use("/api", apiRoutes);
+
 app.get("/health", async (req, res) => {
   try {
     await sequelize.authenticate();

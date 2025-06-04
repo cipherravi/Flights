@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+const { sequelize } = require("./models");
 const { serverConfig, getLogger } = require("./config");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

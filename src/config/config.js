@@ -7,10 +7,17 @@ console.log("Loaded config:");
 console.log({
   env: process.env.NODE_ENV,
   DB_DIALECT: process.env.DB_DIALECT,
-  DB_HOST: process.env.DB_HOST,
-  DB_USER: process.env.DB_USER,
-  DB_DATABASE: process.env.DB_DATABASE,
+  DB_HOST: process.env.MYSQLHOST,
+  DB_USER: process.env.MYSQLUSER,
+  DB_DATABASE: process.env.MYSQLDATABASE,
 });
+// console.log({
+//   env: process.env.NODE_ENV,
+//   DB_DIALECT: process.env.DB_DIALECT,
+//   DB_HOST: process.env.DB_HOST,
+//   DB_USER: process.env.DB_USER,
+//   DB_DATABASE: process.env.DB_DATABASE,
+// });
 
 module.exports = {
   development: {

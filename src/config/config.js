@@ -8,30 +8,30 @@ console.log({
   env: process.env.NODE_ENV,
   DB_DIALECT: process.env.DB_DIALECT,
   DB_HOST: process.env.DB_HOST,
-  DB_USERNAME: process.env.DB_USERNAME,
-  DB_NAME: process.env.DB_NAME_PRODUCTION,
+  DB_USER: process.env.DB_USER,
+  DB_DATABASE: process.env.DB_DATABASE,
 });
 
 module.exports = {
   development: {
-    username: process.env.DB_USERNAME,
+    username: process.env.DB_USER,
     password: process.env.DB_PASSWORD || null,
-    database: process.env.DB_NAME_DEVELOPMENT,
+    database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT || "mysql",
   },
   test: {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD || null,
-    database: process.env.DB_NAME_TEST,
+    database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT || "mysql",
   },
   production: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME_PRODUCTION,
-    host: process.env.DB_HOST,
+    username: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    host: process.env.MYSQLHOST,
     dialect: process.env.DB_DIALECT || "mysql",
   },
 };

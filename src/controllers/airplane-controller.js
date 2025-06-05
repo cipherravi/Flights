@@ -1,10 +1,12 @@
 const { StatusCodes } = require("http-status-codes");
+const axios = require("axios");
 const { getLogger } = require("../config");
 const logger = getLogger(__filename);
 const { SuccessResponse, ErrorResponse } = require("../utils/common");
-const generateSeats = require("../utils/helpers/generateSeatsForAirplane");
 const { AirplaneService } = require("../services");
 const AppError = require("../utils/AppError");
+const { serverConfig } = require("../config");
+const { BOOKING_SERVICE_URL } = serverConfig;
 
 async function createAirplane(req, res) {
   try {
@@ -15,8 +17,14 @@ async function createAirplane(req, res) {
       capacity,
     });
     logger.info("createAirplane in Airplane controller accessed succesfully");
-
-    await generateSeats(airplane);
+    if (!airplane) {
+      throw new AppError("failed to create airplane");
+    }
+    await axios.post(`${BOOKING_SERVICE_URL}/api/v1/seats/generate`, {
+      id: airplane.id,
+      capacity: capacity,
+    });
+    // await generateSeats(airplane);
 
     SuccessResponse.data = airplane;
     SuccessResponse.message = "Airplane created successfully";

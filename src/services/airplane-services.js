@@ -11,11 +11,23 @@ const airplaneRepository = new AirplaneRepository();
 
 async function createAirplane(data) {
   try {
+    const checkAirplane = await airplaneRepository.findAirplane(
+      data.modelNumber
+    );
+    if (checkAirplane) {
+      throw new AppError("Airplane already exists", StatusCodes.BAD_REQUEST);
+    }
+
     const airplane = await airplaneRepository.create(data);
     logger.info("createAirplane in AirplaneService accessed sucessfully");
 
     return airplane;
   } catch (error) {
+    // Don't override existing AppError
+    if (error instanceof AppError) {
+      throw error;
+    }
+
     if (error.name == "SequelizeValidationError") {
       let explanation = [];
       error.errors.forEach((err) => {

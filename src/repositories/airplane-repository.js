@@ -13,6 +13,16 @@ class AirplaneRepository extends CrudRepository {
       throw error;
     }
   }
+  async findAirplane(modelNumber) {
+    try {
+      const response = await Airplane.findOne({
+        where: { modelNumber: modelNumber },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = AirplaneRepository;

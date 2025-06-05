@@ -20,6 +20,9 @@ async function createAirplane(req, res) {
     if (!airplane) {
       throw new AppError("failed to create airplane");
     }
+    console.log("Booking Service URL:", BOOKING_SERVICE_URL);
+    console.log("Booking Service URL ENV:", process.env.BOOKING_SERVICE_URL);
+
     await axios.post(`${BOOKING_SERVICE_URL}/api/v1/seats/generate`, {
       id: airplane.id,
       capacity: capacity,

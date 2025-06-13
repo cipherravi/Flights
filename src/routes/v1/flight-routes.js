@@ -1,14 +1,39 @@
 const express = require("express");
 const router = express.Router();
 const { FlightController } = require("../../controllers");
+const {
+  createFlight,
+  getFlight,
+  getAllFlights,
+  updateRemainingSeats,
+  destroyFlight,
+} = FlightController;
 const { FlightValidator } = require("../../middlewares");
+const verifyUser = require("../../middlewares/verifyUser");
+const checkAccess = require("../../middlewares/checkAccess");
+
+const resource = "flight";
+
 router.post(
   "/",
   FlightValidator.validateCreateFlight,
-  FlightController.createFlight
+  verifyUser,
+  checkAccess(resource, "create"),
+  createFlight
 );
-router.get("/", FlightController.getAllFlights);
-router.get("/:id", FlightController.getFlight);
-router.patch("/", FlightController.updateRemainingSeats);
+router.get("/", verifyUser, checkAccess(resource, "read"), getAllFlights);
+router.get("/:id", verifyUser, checkAccess(resource, "read"), getFlight);
+router.patch(
+  "/",
+  verifyUser,
+  checkAccess(resource, "update"),
+  updateRemainingSeats
+);
+router.delete(
+  "/:id",
+  verifyUser,
+  checkAccess(resource, "delete"),
+  destroyFlight
+);
 
 module.exports = router;

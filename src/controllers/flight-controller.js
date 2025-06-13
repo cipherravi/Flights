@@ -148,10 +148,39 @@ async function updateRemainingSeats(req, res) {
     return res.status(statusCode).json(ErrorResponse);
   }
 }
+async function destroyFlight(req, res) {
+  try {
+    const { id } = req.params;
+    if (!id || isNaN(Number(id)))
+      throw new AppError("Send a valid Id", StatusCodes.BAD_REQUEST);
+
+    const response = await FlightServcie.destroyFlight(id);
+    logger.info("Succesfully destroyed Flight with id :", id);
+    SuccessResponse.data = response;
+    SuccessResponse.message = `Succesfully destroyed Flight with id :${id} `;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    logger.error(error.stack || error.message);
+
+    //If it's an AppError then use it's own message status codes
+    const statusCode =
+      error instanceof AppError
+        ? error.statusCode
+        : StatusCodes.INTERNAL_SERVER_ERROR;
+    const message =
+      error instanceof AppError
+        ? error.message
+        : "Something went wrong while destroying Flight";
+
+    ErrorResponse.error = message;
+    return res.status(statusCode).json(ErrorResponse);
+  }
+}
 
 module.exports = {
   createFlight,
   getAllFlights,
   getFlight,
   updateRemainingSeats,
+  destroyFlight,
 };

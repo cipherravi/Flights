@@ -143,6 +143,28 @@ async function updateRemainingSeats(id, seats, decrease) {
   }
 }
 
+async function destroyFlight(id) {
+  try {
+    const response = await flightRepository.destroy(id);
+    if (!response)
+      throw new AppError(
+        "Flight not found , Please check Id",
+        StatusCodes.NOT_FOUND
+      );
+    logger.info("Successfully Destroyed Flight with id :", id);
+    return response;
+  } catch (error) {
+    //Donn't override existing AppError
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(
+      `Failed to destroy Flight with Id :${id}`,
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
 // async function updateFlight(data) {}
 
 module.exports = {
@@ -150,4 +172,5 @@ module.exports = {
   getAllFlights,
   getFlight,
   updateRemainingSeats,
+  destroyFlight,
 };

@@ -1,9 +1,11 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const app = express();
 const { sequelize } = require("./models");
 const { serverConfig, getLogger } = require("./config");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 const logger = getLogger(__filename);
 const apiRoutes = require("./routes");
 

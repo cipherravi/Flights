@@ -1,12 +1,14 @@
 const jwt = require("jsonwebtoken");
+const { StatusCodes } = require("http-status-codes");
+const { ErrorResponse } = require("../utils/common");
+const AppError = require("../utils/AppError");
 const { serverConfig } = require("../config");
 const { SECRET_KEY } = serverConfig;
 
 async function userVerification(req, res, next) {
   try {
-    console.log("First");
     const token = req.headers["x-access-token"] || req.cookies.token;
-    console.log(token);
+
     if (!token) {
       throw new AppError("Token not found", StatusCodes.BAD_REQUEST);
     }

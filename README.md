@@ -1,48 +1,125 @@
-This is a base node js project template, which anyone can use as it has been prepared, by keeping some of the most important code principles and project management recommendations. Feel free to change anything. 
+# ✈️ Flights Service
+
+A structured and secure Flights microservice responsible for managing core aviation data — including CRUD operations for cities, airports, airplanes, and flights. Built using Node.js, Express, MySQL, Sequelize ORM, and follows the MVC pattern.
+
+All sensitive endpoints are protected via role-based access control, ensuring that only authorized companies/admins can perform create, update, and delete operations.
+
+---
+
+## 🔐 Features
+
+- Full **CRUD** operations for:
+  - Cities
+  - Airports
+  - Airplanes
+  - Flights
+- **Role-based access control:**
+  - Admins/Companies → Full access (create/update/delete)
+  - Users → Read-only access to public GET endpoints
+- **Flight Date Verification:**
+  - Automatically validates dates/times before creating flights
+  - Prevents invalid or past-date entries
+- Built using **clean MVC architecture**
+- Sequelize-based DB schema and migrations
+- Secure, cookie-based JWT verification
+- Structured logging with Winston 
+
+---
+
+## 🛠️ Tech Stack
+
+- **Node.js**
+- **Express.js**
+- **MySQL** with **Sequelize ORM**
+- **Sequelize CLI** for migrations
+- **JWT + cookie-parser** for authorization
+- **Winston** for logs
+
+---
+
+## 📁 Folder Structure
+
+<pre>
+Flights/
+├── src/
+│ ├── config/
+│ ├── controllers/
+│ ├── middlewares/
+│ ├── migrations/
+│ ├── models/
+│ ├── routes/
+│ ├── services/
+│ ├── utils/
+│ └── index.js
+├── .env.example
+├── package.json
+└── README.md
+</pre>
+
+---
+
+## ⚙️ Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/cipherravi/Flights.git
+cd Flights
+```
 
 
-`src` -> Inside the src folder all the actual source code regarding the project will reside, this will not include any kind of tests. (You might want to make separate tests folder)
+### 2. Install Dependencies
 
-Lets take a look inside the `src` folder
+npm install
 
- - `config` -> In this folder anything and everything regarding any configurations or setup of a library or module will be done. For example: setting up `dotenv` so that we can use the environment variables anywhere in a cleaner fashion, this is done in the `server-config.js`. One more example can be to setup you logging library that can help you to prepare meaningful logs, so configuration for this library should also be done here. 
+### 3. Setup Environment Variables
+change .env.example file to .env with actual values
 
- - `routes` -> In the routes folder, we register a route and the corresponding middleware and controllers to it. 
+### 4. Run Database Migrations
 
- - `middlewares` -> they are just going to intercept the incoming requests where we can write our validators, authenticators etc. 
+cd src
+npx sequelize-cli db:migrate
 
- - `controllers` -> they are kind of the last middlewares as post them you call you business layer to execute the budiness logic. In controllers we just receive the incoming requests and data and then pass it to the business layer, and once business layer returns an output, we structure the API response in controllers and send the output. 
+### 5. Start the Development Server
 
- - `repositories` -> this folder contains all the logic using which we interact the DB by writing queries, all the raw queries or ORM queries will go here.
+npm run dev
 
- - `services` -> contains the buiness logic and interacts with repositories for data from the database
+Server will start on http://localhost:PORT
 
- - `utils` -> contains helper methods, error classes etc.
+### 📡 API Overview
+<pre>
+| Entity   | Endpoint Prefix | Description             |
+| -------- | --------------- | ----------------------- |
+| City     | `/cities`       | Manage city data        |
+| Airport  | `/airports`     | Manage airport info     |
+| Airplane | `/airplanes`    | Manage aircraft info    |
+| Flight   | `/flights`      | Schedule/manage flights |
 
-### Setup the project
+</pre>
 
- - Download this template from github and open it in your favourite text editor. 
- - Go inside the folder path and execute the following command:
-  ```
-  npm install
-  ```
- - In the root directory create a `.env` file and add the following env variables
-    ```
-        PORT=<port number of your choice>
-    ```
-    ex: 
-    ```
-        PORT=3000
-    ```
- - go inside the `src` folder and execute the following command:
-    ```
-      npx sequelize init
-    ```
- - By executing the above command you will get migrations and seeders folder along with a config.json inside the config folder. 
- - If you're setting up your development environment, then write the username of your db, password of your db and in dialect mention whatever db you are using for ex: mysql, mariadb etc
- - If you're setting up test or prod environment, make sure you also replace the host with the hosted db url.
+### 🧠 Smart Validations
 
- - To run the server execute
- ```
- npm run dev
- ```
+verifyDate utility is used before creating any new flight or schedule
+Prevents:
+Flights with departure date in the past
+Invalid timestamp formats
+Overlapping aircraft usage
+
+### 📜 Logging
+
+Winston is used to log:
+
+- Request and response activity
+- Errors and exceptions
+- Authentication-related events
+Logs are stored in the /logs/ directory with time-stamped filenames.
+
+
+🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+Feel free to fork the repo and submit a PR.
+
+👨‍💻 Author
+
+Made with ❤️ by Ravi yadav

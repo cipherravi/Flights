@@ -14,8 +14,8 @@ const checkAccess = require("../../middlewares/checkAccess");
 const resource = "airport";
 
 router.post("/", verifyUser, checkAccess(resource, "create"), createAirport);
-router.get("/", verifyUser, checkAccess(resource, "read"), getAllAirports);
-router.get("/:id", verifyUser, checkAccess(resource, "read"), getAirport);
+router.get("/", getAllAirports);
+router.get("/:id", getAirport);
 router.patch("/", verifyUser, checkAccess(resource, "update"), updateAirport);
 router.delete(
   "/:id",

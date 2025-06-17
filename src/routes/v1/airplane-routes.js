@@ -22,8 +22,8 @@ router.post(
   checkAccess(resource, "create"),
   createAirplane
 );
-router.get("/", verifyUser, checkAccess(resource, "read"), getAllAirplanes);
-router.get("/:id", verifyUser, checkAccess(resource, "read"), getAirplane);
+router.get("/", getAllAirplanes);
+router.get("/:id", getAirplane);
 router.patch("/", verifyUser, checkAccess(resource, "update"), updateAirplane);
 router.delete(
   "/:id",

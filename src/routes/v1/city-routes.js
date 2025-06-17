@@ -17,9 +17,9 @@ router.post(
   checkAccess(resource, "create"),
   createCity
 );
-router.get("/:id", verifyUser, checkAccess(resource, "read"), getCity);
+router.get("/:id", getCity);
 
-router.get("/", verifyUser, checkAccess(resource, "read"), getAllCities);
+router.get("/", getAllCities);
 router.patch("/", verifyUser, checkAccess(resource, "update"), updateCity);
 router.delete("/:id", verifyUser, checkAccess(resource, "delete"), destroCity);
 

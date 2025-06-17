@@ -21,8 +21,8 @@ router.post(
   checkAccess(resource, "create"),
   createFlight
 );
-router.get("/", verifyUser, checkAccess(resource, "read"), getAllFlights);
-router.get("/:id", verifyUser, checkAccess(resource, "read"), getFlight);
+router.get("/", getAllFlights);
+router.get("/:id", getFlight);
 router.patch(
   "/",
   verifyUser,
